@@ -88,3 +88,21 @@ We can create simulations regarding attention complexity and recurrent time comp
 3. Attention layers enables matrix multiplication with a great advantage of GPUs and TPUs
 
 The complexity $O(1)$ which derives to the $O(N^2 *d)$ complexity is the fundamental principle behind any LLM no matter which is.
+
+# Production of Tokens (AI revolution)
+There are 9 steps to produce an LLM output
+
+1. **Tokenization:** convert an input sequence into tokens using a tokenizer. We will talk about this in new lectures
+2. **Model input:** pass the tokenized sequence into the model e.g GPT
+3. **Model:** model process the input using different layers from the input layer through multiple transformer layers to the output layer (we will discuss about this arquitecture afterwards dont worry)
+4. **Output generation:** model produce a raw of output logits given the input sequence
+5. **Sampler:** convert the logits to probabilities using different hyperparameters 
+6. **Next token Selection (Next TS):** next token is selected based on probabilities from the sampler
+7. **Next Token addition:** the selected next token is addedd to the input sequence and repeats the process from stwp 3 until the maximum token limit is reached
+8. **Token Generation Completion (Text Generation):** text generation finish when the maximum token limit has reached or a end-of-sequence token has been identified
+9. **Text Reconstruction:** Tokenizer converts the final sequence of tokens back into a string
+
+So briefly there are three major steps:
+1. Input = input sequence as tokens
+2. Model processing input
+3. Output = next token addedd at the end of the input if maximum tokens is reached
