@@ -43,3 +43,39 @@ The structure of the N=6 layers is identical but the content is different since 
 Take in count that although all the multi-head attention mechanisms perform the same functions they do not perform the same tasks. The reason is because each leayer learns from previous layers checking different ways of associating the tokens in the sequence
 
 To avoid problems of dimensionality we can set a dimension size to represent tokens, a constant for a given model for example in the original Transformer model $d_{model} = 512$
+
+# 1. Encoder - Input Embedding
+
+this sublayer converts the input tokens to vectors of dimension $d_{model}= 512$ or to the specified size of the model from past learning.
+
+![Embedding](Input_embedding.jpg "Input Embedding")
+
+The `tokenizer` will transform the sentence into `tokens`. Each `tokenizer` has own methods such as `Byte Pair Encoding (BPE)`, word piece and sentence piece methods. The original Transformer uses BPE but other models use different mehtods
+
+You can test it out in OpenAI [Tokenizer openAI](https://platform.openai.com/tokenizer) you can put the following sentence *the Transformer is an innovative NLP model!* and you will get this:
+
+![Tokenizer](Tokenizer.jpg "Tokenizer")
+
+As you can see there are 9 tokens and 43 characters. You must know that usually each word is represented by an integer in the tokenizer.
+
+Additionally each word is represented by a $d_{model}=512$ dimensions, for example:
+
+```bash
+curl https://api.openai.com/v1/embeddings   -H "Content-Type: application/json"   -H "Authorization: Bearer sk-XXXXXXXX"   -d '{
+    "input": "The black cat sat on the couch and the brown dog slept on the couch",
+    "model": "text-embedding-3-small"
+  }'
+
+```
+
+You can also test it with the files `input_embedding.py` or `input_embedding_node.js` if you prefer Python or NodeJS. The output will be something like this for the phrase (Note: ensure that you have an `OPENAI_API_KEY` in a `.env` file to avoid issues):
+
+```python 
+array=[-0.027019580826163292, -0.03926384449005127, -0.03197353333234787, 0.007338985800743103, 0.037857700139284134, ......, -0.03318497911095619, 0.01930742710828781]
+```
+
+You can also obtain a similar representation for each word. And we can also check if two words are similar or not. For example que can check if the words `king` and `queen` are similar using the Cosine distance metric. You can run the `cosine_similarity.py` or `cosine_similarity_node.js` as you prefer to get the ouput.
+
+*Cosine similarity between 'king' and 'queen': 0.5905304590968364*
+
+So therefore we can conclude that the input to the Transformers arquitecture is not just simple numbers. Models have learned word word embeddings that already provide information regarding words association. However there is no context about the position of each word in the sequence. In order to solve this the next structure is vital the `positional encoding`
