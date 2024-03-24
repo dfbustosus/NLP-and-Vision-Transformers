@@ -90,6 +90,8 @@ Basically the idea is add a value to the word embedding of each word so that is 
 
 You need to take in count that there are different ways to do this, one technique is the unit sphere with sine and cosine values. Vawani et al. (2017) provide the following functions to generate different frequencies for the **positional encoding(PE)** for each position and each dimension $j$ of the $d_{model}=512$ of the word embedding vector
 
+$PE_{pos_{2j}}= sin(\frac{pos}{10000^{\frac{2j}{d_{model}}}})$
+
 $$PE_{(\text{pos}_{2j})}= \sin\left(\frac{pos}{10000^{\frac{2j}{d_{\text{model}}}}}\right)$$
 
 $$PE_{(\text{pos}_{2j+1})}= \cos\left(\frac{pos}{10000^{\frac{2j}{d_{\text{model}}}}}\right)$$
