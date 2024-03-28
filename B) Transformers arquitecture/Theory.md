@@ -80,7 +80,8 @@ You can also obtain a similar representation for each word. And we can also chec
 
 So therefore, we can conclude that the input to the Transformers arquitecture is not just simple numbers. Models have learned word embeddings that already provide information regarding words association. However there is no context about the position of each word in the sequence. In order to solve this the next structure is vital the `positional encoding`
 
-# 2 Encoder - Positional Embedding
+# 2. Encoder 
+## 2.1 Positional Embedding
 
 When we go out from the input embedding we have a sequence of vectors of dimension $d_{model}=512$. However we need to know the position of each word in the sequence and that's the `Input Embedding` purpose. The main idea is add a positional encoding value to the input embedding instead of having additional vectors to describe the position of a token in a sequence.
 
@@ -88,6 +89,8 @@ When we go out from the input embedding we have a sequence of vectors of dimensi
 
 Basically the idea is add a value to the word embedding of each word so that is has that information. In that case we need to add a value to the $d_{model}=512$ dimensions. For each word embedding vector we need to find a way to provide information $j$ in the `range(0,512)` dimensions of the word embedding vector of each word.
 
+
+## 2.2 Positional Encoding
 You need to take in count that there are different ways to do this, one technique is the unit sphere with sine and cosine values. Vawani et al. (2017) provide the following functions to generate different frequencies for the **positional encoding(PE)** for each position and each dimension $j$ of the $d_{model}=512$ of the word embedding vector
 
 $$PE_{pos_{2j}}= sin(\frac{pos}{10000^{\frac{2j}{d_{model}}}})$$
@@ -200,4 +203,6 @@ cosine_similarity(pc(black), pc(brown))= [[0.81230]]
 
 From the `positional encoding` each word contains the initial word embedding info and the positional encoding values. The output from the `positional encoding` is passed now to the `Multi-head attention sub-layer` let's go inside of this new `sub-layer`
 
+## 2.3 Multi-Head Attention
 
+Very soon!
