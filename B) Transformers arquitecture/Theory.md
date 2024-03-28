@@ -46,11 +46,11 @@ To avoid problems of dimensionality we can set a dimension size to represent tok
 
 # 1. Encoder - Input Embedding
 
-this sublayer converts the input tokens to vectors of dimension $d_{model}= 512$ or to the specified size of the model from past learning.
+This sublayer converts the input tokens to vectors of dimension $d_{model}= 512$ or to the specified size of the model from past learning.
 
 ![Embedding](Input_embedding.jpg "Input Embedding")
 
-The `tokenizer` will transform the sentence into `tokens`. Each `tokenizer` has own methods such as `Byte Pair Encoding (BPE)`, word piece and sentence piece methods. The original Transformer uses BPE but other models use different mehtods
+The `tokenizer` will transform the sentence into `tokens`. Each `tokenizer` has own methods such as `Byte Pair Encoding (BPE)`, word piece and sentence piece methods. The original Transformer uses `BPE` but other models use different mehtods
 
 You can test it out in OpenAI [Tokenizer openAI](https://platform.openai.com/tokenizer) you can put the following sentence *the Transformer is an innovative NLP model!* and you will get this:
 
@@ -78,11 +78,11 @@ You can also obtain a similar representation for each word. And we can also chec
 
 *Cosine similarity between 'king' and 'queen': 0.5905304590968364*
 
-So therefore we can conclude that the input to the Transformers arquitecture is not just simple numbers. Models have learned word word embeddings that already provide information regarding words association. However there is no context about the position of each word in the sequence. In order to solve this the next structure is vital the `positional encoding`
+So therefore, we can conclude that the input to the Transformers arquitecture is not just simple numbers. Models have learned word embeddings that already provide information regarding words association. However there is no context about the position of each word in the sequence. In order to solve this the next structure is vital the `positional encoding`
 
 # 2 Encoder - Positional Embedding
 
-When we go out from the input embedding we have a sequence of vectors of dimension $d_{model}=512$. However we need to know the position of each word in the sequence and that's the `Input Embedding` purpose. the main idea is add a positional enocding vlaue to the input embedding instead of having additional vectors to describe the position of a token in a sequence.
+When we go out from the input embedding we have a sequence of vectors of dimension $d_{model}=512$. However we need to know the position of each word in the sequence and that's the `Input Embedding` purpose. The main idea is add a positional encoding value to the input embedding instead of having additional vectors to describe the position of a token in a sequence.
 
 ![Positional Embedding](Positional_embedding.jpg "Positional Embedding")
 
@@ -144,3 +144,60 @@ cosine_similarity(black, brown)= [[0.56902884]]
 So therefore with these examples you will notice that the positional encoding is crucial for incorporating the notion of word order and distance into the model's understanding of the input sequence (an unique representation for each position in the input sequence). It ensures that the model can differentiate between words based not only on their content but also on their position in the sequence.
 
 Now the big question is **How we add positional encoding to the embedding vector?**. Let's see it.
+
+**Adding the positional encoding to the embedding vector**
+
+Well basically adding the positional encoding vector to the word embedding vector as you can see in the following figure
+
+![Adding positional encoding](Adding_positional_encoding.jpg "Adding positional encoding")
+
+So the notation would be:
+
+$$pc(word) = y_{word} + pe(position)$$
+
+In the case of our last example for the word `black` we have:
+$pc(black) = y_{black} + pe(2)$
+
+However is we apply the solution like this we might lose information of the word embedding since could be minimized by the positional encoding vector. In order to solve this there are different ways to increase the value of $y$ to ensure that the information of the word embedding can be used properly, for example we can add an arbitrary value to $y$ like this:
+
+$$y*\sqrt{d_{model}}$$
+
+Thus, the general code structure would be the following:
+
+```python
+for i in range(0, 512,2):
+  pe[0][i] = math.sin(pos / (10000 ** ((2 * i)/d_model)))
+  pc[0][i] = (y[0][i]*math.sqrt(d_model))+ pe[0][i]
+  pe[0][i+1] = math.cos(pos / (10000 ** ((2 * i)/d_model)))
+  pc[0][i+1] = (y[0][i+1]*math.sqrt(d_model))+ pe[0][i+1]
+```
+
+You can test it out using `adding_positional_encoding.py` or `adding_positional_encoding.js` The result should be
+
+```python
+[[1.0933194359378953, 0.26627445503091957, 0.3648030077827548, 0.28991768982320787, 0.8957610107050262,....,
+  1.7605277430867114, -0.2971715378171267, 1.848602349594715, 0.14818397844827294, 1.1748635128654696]]
+```
+
+And if we find the cosine similarity between `pc(black)` and `pc(brown)` we got this (cehck out `adding_positional_encoding_2.py` or `adding_positional_encoding_2.js`)
+
+*Cosine similarity between pc(black) and pc(brown): 0.8123017449234047*
+
+So in summary we calculate this:
+
+- `word similarity` 
+```python
+cosine_similarity(black, brown)= [[0.56902884]]
+```
+- `positional encoding vector similarity` between positions 2 and 10 
+```python
+cosine_similarity(pos(2), pos(10))= [[0.8600013]]
+```
+- `final positional encoding similarity` 
+```python
+cosine_similarity(pc(black), pc(brown))= [[0.81230]]
+```
+
+From the `positional encoding` each word contains the initial word embedding info and the positional encoding values. The output from the `positional encoding` is passed now to the `Multi-head attention sub-layer` let's go inside of this new `sub-layer`
+
+

@@ -4,8 +4,9 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Initialize OpenAI client with your API key
-api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=api_key)
+client = OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY")
+)
 
 # Function to get embeddings of words
 def get_embeddings(words):
