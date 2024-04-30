@@ -205,4 +205,43 @@ From the `positional encoding` each word contains the initial word embedding inf
 
 ## 2.3 Multi-Head Attention
 
-Very soon!
+![Multi head attention](Multi_head_attention.jpg "Multi head attention")
+
+This sublayer has eigh heads and is followed by a post-layer normalization. We add residual connections to the output of the sublayer and normalize it. So we need to understand first how the `attention layer` works and therefore we can create a `multi-attention` structure and finally we can introduce the `post-layer normalization` concept
+
+So let's start from the begin. The input to this sublayer is a vector which contains the embedding and the positional encoding of each word. The output of each sublayer feed the other layers. 
+
+So the dimension of the vector of each word $x_n$ of an input sequence if $d_{model} =512$ for example
+
+$$PE(X_n)= [d_{1},d_{2},....,d_{512}]$$
+
+Each words become a vactor of $d_{model}=512$
+
+Also each word needs to be mapped to all the other words in order to determine how it fits in a sequence. For example let's say that we have this sentence: "The dog is fine above the bed and it was cleaned"
+
+So for instance the model needs to be trained to determine if `it` is related to `dog` or `bed`. We can do this with a lot of computation using the $d_{model}=512$ but this is not feasible when we have a lot of sequences.
+
+A smarter approach would be for the 8 heads of the model project the $d_{model}=512$ dimensions of each word $x_n$ in sequence $x$ into the $d_k = 64$ dimensions. We can run the eight heads in parallel to speed up the training and obtain 8 different representations subspaces of how each word relates to another
+
+![Multi head representation](Multi_head_representation.jpg "Multi head representation")
+
+So there are $8$ heads running in parallel. For example one head could decide that `it` is strongly related to `dog`, other head that `bed` is related to `cleaned` and so on. The output of each head is a matrix $Z_i$ with a shape $x* d_k$. And the output is defined as:
+
+$$Z= (Z_0, Z_1,Z_2,Z_3,Z_4,Z_5,Z_6,Z_7)$$
+
+$Z$ must be concatenated to ensure that the output of the multi-head sublayer is not a sequence of dimensions. Before the output of the multi-head attention sublayer, the elements of Z are concatenated:
+
+$$Multihead(out) = Concat(Z_0,Z_1,Z_2,Z_3,Z_4,Z_5,Z_6,Z_7)= x, d_{model}$$
+
+Each head is concatenated into $z$ which has a dimension $d_{model}=512$. 
+
+Inside of each `head` $h_n$ of the attention mechanism the "word" matrices have three representations
+
+1. A query matrix ($Q$) with dimension $d_q = 64$ which seeks all the key-value pairs of the other "word" matrices
+2. A key matrix ($K$) with a dimension $d_k =64$
+3. A value matrix ($V$) with a dimension $d_v =64$
+
+The `Attention` is defined as the scaled dot-product attention, which is represented by the following equation
+
+$$Attention (Q,K,V) = softmax(\frac{QK^T}{\sqrt{d_k}})V$$
+
