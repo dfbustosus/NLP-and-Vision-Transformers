@@ -211,13 +211,13 @@ This sublayer has eigh heads and is followed by a post-layer normalization. We a
 
 So let's start from the begin. The input to this sublayer is a vector which contains the embedding and the positional encoding of each word. The output of each sublayer feed the other layers. 
 
-So the dimension of the vector of each word $x_n$ of an input sequence if $d_{model} =512$ for example
+So the dimension of the vector of each word $x_n$ of an input sequence if $d_{model} =512$ for example is:
 
 $$PE(X_n)= [d_{1},d_{2},....,d_{512}]$$
 
-Each words become a vactor of $d_{model}=512$
+Each word become a vector of $d_{model}=512$
 
-Also each word needs to be mapped to all the other words in order to determine how it fits in a sequence. For example let's say that we have this sentence: "The dog is fine above the bed and it was cleaned"
+Also each word needs to be mapped to all the other words in order to determine how it fits in a sequence. For example let's say that we have this sentence: *"The dog is fine above the bed and it was cleaned"*
 
 So for instance the model needs to be trained to determine if `it` is related to `dog` or `bed`. We can do this with a lot of computation using the $d_{model}=512$ but this is not feasible when we have a lot of sequences.
 
@@ -245,3 +245,8 @@ The `Attention` is defined as the scaled dot-product attention, which is represe
 
 $$Attention (Q,K,V) = softmax(\frac{QK^T}{\sqrt{d_k}})V$$
 
+The matrices have the same dimensions, so apply the scaled dot product is not complex, and concatenate the results is easy too. 
+
+To obtain the $Q$, $K$ and $V$ matrices we need to train the model with corresponding $Q_w$, $K_w$ and $V_w$ with $d_k =64$ columns and $d_{model}=512$ rows. $Q$ is obtained by a dot product between $x$ and $Q_w$ and $Q$ with have a dimension of $d_k =64$.
+
+You need to notice that you can modify these parameters as you like for example you can modify the `number of layers`, `heads`, $d_{model}$, $d_k$ and other ones to fit your model. But you need to be careful if you are going to change it. And also **don't worry** you don't need to do this all by hand but in order to understand how Transformers work we need to do one example at least one time to learn the concepts. So let's do an example to check how the `Attention mechanism` works. 
